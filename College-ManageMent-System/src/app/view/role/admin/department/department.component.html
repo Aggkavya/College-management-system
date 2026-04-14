@@ -1,0 +1,76 @@
+<div class="section-header">
+  <div class="section-title">Departments</div>
+  <button class="btn-add" (click)="toggleForm()">+ Add</button>
+</div>
+
+<!-- FORM -->
+<form class="card" *ngIf="showForm" [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+  <div class="card-header">
+    {{ editingId ? 'Edit Department' : 'Add Department' }}
+  </div>
+
+  <div class="form-body">
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" formControlName="name" />
+      </div>
+
+      <div class="form-group">
+        <label>Code</label>
+        <input type="text" formControlName="code" />
+      </div>
+
+      <div class="form-group">
+        <label>HOD</label>
+        <input type="text" formControlName="hodName" />
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+      </div>
+
+      <div class="form-group full">
+        <label>Extension</label>
+        <input type="number" formControlName="extensionNo" />
+      </div>
+
+      <div class="form-group full actions">
+        <button class="btn-submit" type="submit">
+          {{ editingId ? 'Update' : 'Save' }}
+        </button>
+
+        <button type="button" class="btn-cancel" (click)="closeForm()">
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<!-- CARDS -->
+<div class="card-grid">
+  <div class="dept-card" *ngFor="let dept of department">
+
+    <div class="dept-header">
+      <div>
+        <div class="dept-name">{{ dept.name }}</div>
+        <div class="dept-code">{{ dept.code }}</div>
+      </div>
+
+      <div class="dept-actions">
+        <button (click)="editDepartment(dept)">Edit</button>
+        <button (click)="deleteDepartment(dept.id)">Delete</button>
+      </div>
+    </div>
+
+    <div class="dept-body">
+      <div><strong>HOD:</strong> {{ dept.hodName }}</div>
+      <div><strong>Email:</strong> {{ dept.email }}</div>
+    </div>
+
+  </div>
+</div>

@@ -17,16 +17,19 @@ export class LoginComponent {
     });
   }
   loginSubmit() {
-    // Implement login logic here
-    console.log('Logging in user:', this.loginForm.value);
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          console.log("Success");
-          localStorage.setItem('token', response.token);
+          console.log("RAW:", response);
+
+          const parsed = JSON.parse(response);
+
+          console.log("PARSED:", parsed);
+
+          localStorage.setItem('token', parsed.token);
         },
         error: (error) => {
-          console.log("Error" + JSON.stringify(error));
+          console.log("Error", error);
         }
       });
     }

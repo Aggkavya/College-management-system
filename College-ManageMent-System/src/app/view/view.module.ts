@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { ViewRoutingModule } from './view-routing.module';
-import { DepartmentComponent } from './admin/department/department.component';
+import { DepartmentComponent } from './role/admin/department/department.component';
 
 @NgModule({
   declarations: [

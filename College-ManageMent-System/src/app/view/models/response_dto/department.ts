@@ -1,7 +1,8 @@
-export interface DepartmentRESPONSE {
-    "name":string,
+export interface DepartmentResponse {
+    "name": string,
     "email": string,
     "hodName": string,
     "id": string,
-    "code":string
+    "code": string,
+    "extensionNo": string
 }
