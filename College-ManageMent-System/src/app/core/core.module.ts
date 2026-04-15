@@ -4,6 +4,7 @@ import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
 import { LandingComponent } from './components/layout/landing/landing.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NavSidebarComponent } from './components/layout/nav-sidebar/nav-sidebar.component';
 
 
 
@@ -12,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     HeaderComponent,
     FooterComponent,
     LandingComponent,
+    NavSidebarComponent,
   ],
   imports: [
     CommonModule, ReactiveFormsModule
