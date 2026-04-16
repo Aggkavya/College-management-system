@@ -1,1 +1,130 @@
-<p>student works!</p>
+<div class="container">
+
+  <h2>Student Management</h2>
+
+  <!-- FORM -->
+  <div class="form-card">
+    <h3>{{ isEditMode ? 'Update Student' : 'Add Student' }}</h3>
+
+    <form (ngSubmit)="submitForm()">
+
+      <div class="form-grid">
+
+        <!-- REQUIRED -->
+        <input type="text" placeholder="First Name *"
+          [(ngModel)]="formData.firstName" name="firstName" required>
+
+        <input type="text" placeholder="Last Name (Optional)"
+          [(ngModel)]="formData.lastName" name="lastName">
+
+        <input type="text" placeholder="Roll No *"
+          [(ngModel)]="formData.rollNo" name="rollNo" required>
+
+        <input type="email" placeholder="Email (Optional)"
+          [(ngModel)]="formData.email" name="email">
+
+        <!-- ENUMS -->
+        <select [(ngModel)]="formData.gender" name="gender" required>
+          <option [ngValue]="null">Select Gender *</option>
+          <option *ngFor="let g of genders" [value]="g">{{ g }}</option>
+        </select>
+
+        <select [(ngModel)]="formData.status" name="status" required>
+          <option [ngValue]="null">Select Status *</option>
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+
+        <select [(ngModel)]="formData.admissionType" name="admissionType">
+          <option [ngValue]="null">Admission Type (Optional)</option>
+          <option *ngFor="let a of admissionTypes" [value]="a">{{ a }}</option>
+        </select>
+
+        <select [(ngModel)]="formData.bloodGroup" name="bloodGroup">
+          <option [ngValue]="null">Blood Group (Optional)</option>
+          <option *ngFor="let b of bloodGroups" [value]="b">{{ b }}</option>
+        </select>
+
+        <!-- NUMBERS -->
+        <input type="number" placeholder="Semester *"
+          [(ngModel)]="formData.currentSemester" name="currentSemester" required>
+
+        <input type="number" placeholder="Admission Year *"
+          [(ngModel)]="formData.admissionYear" name="admissionYear" required>
+
+        <!-- OPTIONAL -->
+        <input type="text" placeholder="Phone (Optional)"
+          [(ngModel)]="formData.phone" name="phone">
+
+        <input type="text" placeholder="Address (Optional)"
+          [(ngModel)]="formData.address" name="address">
+
+        <input type="text" placeholder="Enrollment No (Optional)"
+          [(ngModel)]="formData.enrollmentNumber" name="enrollmentNumber">
+
+        <!-- RELATIONS -->
+        <select [(ngModel)]="formData.departmentId" name="departmentId" required>
+          <option [ngValue]="null">Select Department *</option>
+          <option *ngFor="let d of departments" [value]="d.id">
+            {{ d.name }}
+          </option>
+        </select>
+
+        <select [(ngModel)]="formData.courseId" name="courseId" required>
+          <option [ngValue]="null">Select Course *</option>
+          <option *ngFor="let c of courses" [value]="c.id">
+            {{ c.courseTitle }}
+          </option>
+        </select>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn primary"
+  [disabled]="!formData.firstName || !formData.rollNo || !formData.departmentId || !formData.courseId">
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+
+        <button type="button" class="btn secondary" (click)="resetForm()">
+          Reset
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <h3>Student List</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Roll</th>
+          <th>Email</th>
+          <th>Dept</th>
+          <th>Course</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let s of students">
+          <td>{{ s.id }}</td>
+          <td>{{ s.firstName }} {{ s.lastName }}</td>
+          <td>{{ s.rollNo }}</td>
+          <td>{{ s.email }}</td>
+          <td>{{ s.departmentName }}</td>
+          <td>{{ s.courseName }}</td>
+
+          <td>
+            <button class="btn edit" (click)="editStudent(s)">Edit</button>
+            <button class="btn delete" (click)="deleteStudent(s.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
