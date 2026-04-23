@@ -30,7 +30,7 @@
 
     <div class="student-items">
       <div *ngFor="let student of students" class="student-item">
-        <div class="student-info">
+        <div class="student-info" [routerLink]="['/view/students', student.id]" title="View student details">
           <div class="student-avatar">
             <img *ngIf="student.profileImageUrl" [src]="student.profileImageUrl" alt="{{student.firstName}}">
             <div *ngIf="!student.profileImageUrl" class="avatar-placeholder">
@@ -47,6 +47,9 @@
           <div [ngClass]="'status-badge ' + (student.status | lowercase)">
             {{ student.status }}
           </div>
+          <button class="action-btn view-btn" [routerLink]="['/view/students', student.id]" title="View">
+            View
+          </button>
           <button class="action-btn edit-btn" (click)="openEditFormModal(student)" title="Edit">
             ✏️
           </button>
