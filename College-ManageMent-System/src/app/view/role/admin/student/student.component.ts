@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../../../services/student/student.service';
 import { StudentRes } from '../../../models/response_dto/student-res';
 import { StudentReq } from '../../../models/request_dto/student-req';
+import { ToastrService } from 'ngx-toastr';
+import { DepartmentService } from '../../../services/department/department.service';
+import { CourseService } from '../../../services/course/course.service';
 
 @Component({
   selector: 'app-student',
@@ -27,6 +30,18 @@ export class StudentComponent implements OnInit {
     'AB_POSITIVE', 'AB_NEGATIVE'
   ];
 
+  // Summary cards
+  totalStudents = 0;
+  activeStudents = 0;
+  graduatedStudents = 0;
+  droppedStudents = 0;
+
+  // Filters
+  selectedDepartment: string | null = null;
+  selectedCourse: number | null = null;
+  selectedStatus: string | null = null;
+  selectedSemester: number | null = null;
+
   formData: StudentReq = this.getEmptyForm();
 
   isEditMode = false;
@@ -34,7 +49,7 @@ export class StudentComponent implements OnInit {
   showFormModal = false;
   searchQuery = '';
 
-  constructor(private studentService: StudentService) {}
+  constructor(private studentService: StudentService, private toastr: ToastrService, private departmentService: DepartmentService, private courseService: CourseService) {}
 
   ngOnInit(): void {
     this.loadStudents();
@@ -70,10 +85,51 @@ export class StudentComponent implements OnInit {
     this.studentService.getStudents().subscribe({
       next: (res) => {
         this.students = res;
+        this.calculateSummaries();
       },
       error: (err) => {
         console.error("Error fetching students", err);
+        this.toastr.error("Failed to load students", "Error");
       }
+    });
+  }
+
+  // Calculate summary counts
+  calculateSummaries() {
+    this.totalStudents = this.students.length;
+    this.activeStudents = this.students.filter(s => s.status === 'ACTIVE').length;
+    this.graduatedStudents = this.students.filter(s => s.status === 'GRADUATED').length;
+    this.droppedStudents = this.students.filter(s => s.status === 'DROPPED').length;
+  }
+
+  // Search handler
+  onSearchChange() {
+    if (this.searchQuery.trim()) {
+      this.studentService.searchStudents(this.searchQuery.trim()).subscribe({
+        next: (res) => {
+          this.students = res;
+          this.calculateSummaries();
+        },
+        error: (err) => {
+          console.error("Error searching students", err);
+          this.toastr.error("Failed to search students", "Error");
+        }
+      });
+    } else {
+      this.loadStudents();
+    }
+  }
+
+  // Filtered students based on filters
+  get filteredStudents(): StudentRes[] {
+    return this.students.filter(student => {
+      const dept = this.departments.find(d => d.id == this.selectedDepartment);
+      const course = this.courses.find(c => c.id == this.selectedCourse);
+      const matchesDepartment = !this.selectedDepartment || student.departmentName === dept?.name;
+      const matchesCourse = !this.selectedCourse || student.courseName === course?.courseTitle;
+      const matchesStatus = !this.selectedStatus || student.status === this.selectedStatus;
+      const matchesSemester = !this.selectedSemester || student.currentSemester === this.selectedSemester;
+      return matchesDepartment && matchesCourse && matchesStatus && matchesSemester;
     });
   }
 
@@ -93,28 +149,28 @@ export class StudentComponent implements OnInit {
       !this.formData.rollNo || 
       !this.formData.departmentId || 
       !this.formData.courseId) {
-    alert("Please fill all required fields");
+    this.toastr.error("Please fill all required fields", "Validation Error");
     return;
   }
   if (this.isEditMode && this.selectedId) {
     this.studentService.updateStudent(this.selectedId, this.formData).subscribe({
       next: () => {
-        alert("Student updated successfully");
+        this.toastr.success("Student updated successfully", "Success");
         //this.resetForm();
         this.closeFormModal();
         this.loadStudents();
       },
-      error: (err) => alert(err.error?.message || "Update failed")
+      error: (err) => this.toastr.error(err.error?.message || "Update failed", "Error")
     });
   } else {
     this.studentService.addStudent(this.formData).subscribe({
       next: () => {
-        alert("Student created successfully");
+        this.toastr.success("Student created successfully", "Success");
         //this.resetForm();
         this.closeFormModal();
         this.loadStudents();
       },
-      error: (err) => alert(err.error?.message || "Create failed")
+      error: (err) => this.toastr.error(err.error?.message || "Create failed", "Error")
     });
   }
 }
@@ -152,7 +208,10 @@ export class StudentComponent implements OnInit {
   deleteStudent(id: number) {
   if (confirm("Are you sure you want to delete this student?")) {
     this.studentService.deleteStudent(id).subscribe(() => {
+      this.toastr.success("Student deleted successfully", "Success");
       this.loadStudents();
+    }, (err) => {
+      this.toastr.error("Failed to delete student", "Error");
     });
   }
 }
@@ -179,14 +238,14 @@ openFormModal() {
   }
 
   loadDepartments() {
-  this.studentService.getDepartments().subscribe({
+  this.departmentService.getDepts().subscribe({
     next: (res) => this.departments = res,
     error: (err) => console.error("Error loading departments", err)
   });
 }
 
 loadCourses() {
-  this.studentService.getCourses().subscribe({
+  this.courseService.getCourses().subscribe({
     next: (res) => this.courses = res,
     error: (err) => console.error("Error loading courses", err)
   });

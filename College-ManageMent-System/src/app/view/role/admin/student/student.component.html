@@ -6,6 +6,26 @@
     </div>
   </div>
 
+  <!-- SUMMARY CARDS -->
+  <div class="summary-cards">
+    <div class="card">
+      <h3>Total Students</h3>
+      <p class="count">{{ totalStudents }}</p>
+    </div>
+    <div class="card">
+      <h3>Active Students</h3>
+      <p class="count">{{ activeStudents }}</p>
+    </div>
+    <div class="card">
+      <h3>Graduated</h3>
+      <p class="count">{{ graduatedStudents }}</p>
+    </div>
+    <div class="card">
+      <h3>Dropped</h3>
+      <p class="count">{{ droppedStudents }}</p>
+    </div>
+  </div>
+
   <!-- SEARCH BAR -->
   <div class="search-section">
     <div class="search-box">
@@ -17,7 +37,40 @@
         type="text" 
         placeholder="Search students..." 
         [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
         class="search-input">
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Department:</label>
+      <select [(ngModel)]="selectedDepartment" (change)="onSearchChange()">
+        <option [ngValue]="null">All Departments</option>
+        <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Course:</label>
+      <select [(ngModel)]="selectedCourse" (change)="onSearchChange()">
+        <option [ngValue]="null">All Courses</option>
+        <option *ngFor="let c of courses" [value]="c.id">{{ c.courseTitle }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="selectedStatus" (change)="onSearchChange()">
+        <option [ngValue]="null">All Statuses</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Semester:</label>
+      <select [(ngModel)]="selectedSemester" (change)="onSearchChange()">
+        <option [ngValue]="null">All Semesters</option>
+        <option *ngFor="let sem of [1,2,3,4,5,6,7,8]" [value]="sem">{{ sem }}</option>
+      </select>
     </div>
   </div>
 
@@ -29,7 +82,7 @@
     </div>
 
     <div class="student-items">
-      <div *ngFor="let student of students" class="student-item">
+      <div *ngFor="let student of filteredStudents" class="student-item">
         <div class="student-info" [routerLink]="['/view/students', student.id]" title="View student details">
           <div class="student-avatar">
             <img *ngIf="student.profileImageUrl" [src]="student.profileImageUrl" alt="{{student.firstName}}">
